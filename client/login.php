@@ -64,7 +64,7 @@ checkLoggedIn();
                     alert("User NOT Found!");
                 } else if (response.status === "success") {
                     var user_id = response.data.user_id;
-                    var category = "USER";
+                    var category = response.role_id === 1 ? "ADMIN" : "USER";
                     var action = "LOG IN";
                     var affected_data = "NONE";
 

@@ -57,6 +57,7 @@ try {
                     "message" => "Admin login successful. Welcome, " . $user['first_name'] . " " . $user['last_name'],
                     "status" => "success",
                     "data" => $user,
+                    "role_id" => 1,
                     "redirect" => "../admin/admin_dashboard.php"
                 ));
             } else {
@@ -65,6 +66,7 @@ try {
                     "message" => "User login successful. Welcome, " . $user['first_name'] . " " . $user['last_name'],
                     "status" => "success",
                     "data" => $user,
+                    "role_id" => 2,
                     "redirect" => "new_appointment.php"
                 ));
             }
