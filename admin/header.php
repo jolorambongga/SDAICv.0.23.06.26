@@ -123,9 +123,11 @@
 							var user_id = <?php echo isset($_SESSION['user_id']) ? json_encode($_SESSION['user_id']) : 'null'; ?>;
 							var category = "ADMIN";
 							var action = "LOG OUT";
-							var affected_data = "WALA NAMAN";
-							logAction(user_id, category, action, affected_data);
-							window.location.href = response.redirect_admin;
+							var affected_data = "NONE";
+							logAction(user_id, category, action, affected_data, function() {
+								window.location.href = response.redirect_admin;
+							});
+							
 						} else {
 							console.error("Logout failed:", response.message);
 						}

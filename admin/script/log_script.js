@@ -1,9 +1,7 @@
-function logAction(user_id, category, action, affected_data) {
-
+function logAction(user_id, category, action, affected_data, callback) {
     var ua = navigator.userAgent;
     var device = '';
     var device_model = '';
-
 
     if (/Android/i.test(ua)) {
         device = 'Android';
@@ -33,8 +31,6 @@ function logAction(user_id, category, action, affected_data) {
             var userIP = response.ip;
             var organization = response.org;
 
-            console.log("IP INFO RESPONSE", response);
-
             var logData = {
                 user_id: user_id,
                 category: category,
@@ -57,14 +53,23 @@ function logAction(user_id, category, action, affected_data) {
                 data: logData,
                 success: function(response) {
                     console.log('Log inserted successfully:', response);
+                    if (callback && typeof callback === 'function') {
+                        callback();
+                    }
                 },
                 error: function(error) {
                     console.error('Error inserting log:', error);
+                    if (callback && typeof callback === 'function') {
+                        callback();
+                    }
                 }
             });
         },
         error: function(error) {
             console.error('Error fetching user IP:', error);
+            if (callback && typeof callback === 'function') {
+                callback(); 
+            }
         }
     });
 }

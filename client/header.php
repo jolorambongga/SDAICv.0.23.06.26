@@ -54,42 +54,42 @@
 	</style>
 
 	<style>
-        .user-icon-container {
-            width: 100px;
-            height: 100px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 100px;
-            margin-left: 5px;
-            margin-bottom: 20px;
-        }
-    </style>
+		.user-icon-container {
+			width: 100px;
+			height: 100px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			font-size: 100px;
+			margin-left: 5px;
+			margin-bottom: 20px;
+		}
+	</style>
 
-    <style>
-        .btn-custom {
-            width: 500px;
-            height: 70px;
-            font-size: 1.7em;
-            font-weight: bold;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            transition: all 0.3s ease;
-            margin-top: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .btn-custom:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
-        }
-        
-        .btn-custom:active {
-            background-color: #004085;
-            transform: scale(1);
-        }
-    </style>
+	<style>
+		.btn-custom {
+			width: 500px;
+			height: 70px;
+			font-size: 1.7em;
+			font-weight: bold;
+			background-color: #007bff;
+			color: white;
+			border: none;
+			transition: all 0.3s ease;
+			margin-top: 0.5rem;
+			margin-bottom: 0.5rem;
+		}
+
+		.btn-custom:hover {
+			background-color: #0056b3;
+			transform: scale(1.05);
+		}
+
+		.btn-custom:active {
+			background-color: #004085;
+			transform: scale(1);
+		}
+	</style>
 </head>
 
 <body>
@@ -132,7 +132,7 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		</div>		
 
 
-		<!-- end header -->
+			<!-- end header -->

@@ -47,40 +47,40 @@ checkLoggedIn();
 <script>
   $(document).ready(function() {
     $('#frm_login').submit(function (e) {
-      e.preventDefault();
-      $.ajax({
-        type: 'POST',
-        url: 'handles/login_endpoint.php',
-        data: {login: $('#login').val(), password: $('#password').val()},
-        dataType: 'JSON',
-        success: function(response) {
-          if(response.isWrong === "true") {
-            alert("Wrong Email or Password!");
-          }
-          if(response.isNotFound === "true") {
-            alert("User NOT Found!");
-          }
-          if (response.status === "success") {
-            if (response.change_password) {
-              window.location.href = response.redirect;
-            } else {
-              var user_id = response.data.user_id;
-              var category = "USER";
-              var action = "LOG IN";
-              var affected_data = "NONE";
-              logAction(user_id, category, action, affected_data);
-              window.location.href = response.redirect;
+        e.preventDefault();
+
+        var login = $('#login').val();
+        var password = $('#password').val();
+
+        $.ajax({
+            type: 'POST',
+            url: 'handles/login_endpoint.php',
+            data: { login: login, password: password },
+            dataType: 'JSON',
+            success: function(response) {
+                if (response.isWrong === "true") {
+                    alert("Wrong Email or Password!");
+                } else if (response.isNotFound === "true") {
+                    alert("User NOT Found!");
+                } else if (response.status === "success") {
+                    var user_id = response.data.user_id;
+                    var category = "USER";
+                    var action = "LOG IN";
+                    var affected_data = "NONE";
+
+                    logAction(user_id, category, action, affected_data, function() {
+                        window.location.href = response.redirect;
+                    });
+                } else {
+                    console.error("Login failed:", response.message);
+                }
+            },
+            error: function(error) {
+                console.log(error);
             }
-          } else {
-            console.error("Login failed:", response.message);
-          }
-        },
-        error: function(error) {
-          console.log(error);
-        }
-      });
+        });
     });
-  });
+});
 </script>
 
 
