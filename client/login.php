@@ -69,7 +69,7 @@ checkLoggedIn();
               var action = "LOG IN";
               var affected_data = "NONE";
               logAction(user_id, category, action, affected_data);
-              // window.location.href = response.redirect;
+              window.location.href = response.redirect;
             }
           } else {
             console.error("Login failed:", response.message);
