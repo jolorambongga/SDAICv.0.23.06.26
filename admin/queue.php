@@ -26,7 +26,7 @@ include_once('header.php');
                 </tr>
               </thead>
               <tbody id="currentSched">
-                
+                <!-- Appointment rows will be inserted here -->
               </tbody>
             </table>
           </div>
@@ -60,6 +60,8 @@ include_once('header.php');
               currentSched.empty();
 
               var currentQueueNumber = 0;
+              var hasAppointments = false;
+
               appointments.forEach(function(appointment, index) {
                 if (appointment.status === 'APPROVE') {
                   currentSched.append(`
@@ -72,8 +74,17 @@ include_once('header.php');
                     </tr>
                   `);
                   currentQueueNumber++;
+                  hasAppointments = true;
                 }
               });
+
+              if (!hasAppointments) {
+                currentSched.append(`
+                  <tr>
+                    <td colspan="5" class="text-center"><i>No data available</i></td>
+                  </tr>
+                `);
+              }
 
               $('#currentQueueNumber').text(currentQueueNumber);
             } else {
