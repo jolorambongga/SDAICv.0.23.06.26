@@ -13,6 +13,11 @@
 
 	<script src="https://cdn.jsdelivr.net/npm/bowser"></script>
 	<script src="../admin/script/log_script.js"></script>
+
+	<!-- date picker -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
 	<style>
 		.sidebar {
 			height: 100%;
@@ -135,4 +140,4 @@
 		</div>		
 
 
-			<!-- end header -->
+		<!-- end header -->
