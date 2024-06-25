@@ -234,11 +234,9 @@ include_once('header.php');
     $(document).ready(function () {
       console.log('ready');
 
-      $(document).on('hidden', '#mod_addServLabel', function() {
 
-      });
-
-      $(document).ready(function() {        
+      $(document).ready(function() { 
+        $('#doc_sched').val("true");
         var doctor_sched = `<label class="form-label">Choose Doctor</label>
         <div class="input-group mb-3">
         <label class="input-group-text bg-warning-" for="doctor">Options</label>
