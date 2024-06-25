@@ -120,7 +120,7 @@ include_once "header.php";
       </div>
       <!-- end reject modal -->
       <?php
-        include_once('modals/receipt_modal.php');
+      include_once('modals/receipt_modal.php');
       ?>
       <input type="hidden" id="activeServiceId" value="All">
     </div>
@@ -188,6 +188,8 @@ include_once "header.php";
           success: function(response) {
             console.log(response);
             $('#tbodyAppointments').empty();
+            var appointment_body = $('#tbodyAppointments');
+            var hasAppointments = false;
             response.data.forEach(function(data) {
               let statusColor = getStatusColor(data.status);
               let completedColor = getCompletedColor(data.completed);
@@ -222,8 +224,17 @@ include_once "header.php";
               </td>
               </tr>
               `;
-              $('#tbodyAppointments').append(read_appointments_html);
+              appointment_body.append(read_appointments_html);
+              hasAppointments = true;
             });
+
+            if (!hasAppointments) {
+              appointment_body.append(`
+                <tr>
+                <td colspan="9" class="text-center"><i>No data available</i></td>
+                </tr>
+                `);
+            }
           },
           error: function(error) {
             console.log("ERROR", error);
