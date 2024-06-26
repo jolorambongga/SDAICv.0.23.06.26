@@ -11,6 +11,7 @@ checkAuth();
 
 <!-- Datepicker CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+<!-- <script src="/bundles/bootstrap-datepicker?v=csAQJHewk-MF7ULDm6WPf6LzXwjK6YdTmHd8vsLCykI1"></script> -->
 
 <div class="my-wrapper">
     <div class="container-fluid">
@@ -145,36 +146,28 @@ checkAuth();
 
         var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-        // Your schedule list
+        console.log("Schedule Data:", schedule); // Check schedule data
 
-        $("#appointment_date").datepicker({
-            dateFormat: 'yy-mm-dd',
-            showButtonPanel: true,
-            minDate: 0,
-            changeMonth: true,
-            changeYear: true,
-            regional: 'en',
-            beforeShowDay: function(date) {
-                var day = date.getDay();
-                var isDisabled = schedule.some(function(item) {
-                    // console.log("LAMAN ", item.day_of_week);
-                    return dayNames.indexOf(item.day_of_week) == day;
-                });
-                // console.log(("Monday").includes(day));
-                // console.log("is disabled console", isDisabled);
-                // console.log("MGA PUTAKTENG DAY YAN: " + day);
-                if (isDisabled) {
-                    console.log("is disabled condition if statement");
-                    return [true, 'disabled', 'Unavailable'];
+        $("#appointment_date").datepicker("widget").on("show", function () {
+            var $calendar = $('.datepicker');
+            var $days = $calendar.find('td.day');
+
+            $days.each(function () {
+                var $day = $(this);
+                var dateString = new Date($day.data('date')).toDateString();
+                var dayOfWeek = dayNames[new Date(dateString).getDay()];
+
+                if (schedule.some(function (item) {
+                    return item.day_of_week === dayOfWeek;
+                })) {
+                    $day.removeClass('disabled');
                 } else {
-                    return [false, '', 'Available'];
+                    $day.addClass('disabled');
                 }
-            },
-            onSelect: function(dateText) {
-                // Implement any additional logic on date selection if needed
-            }
+            });
         });
     }
+
 
 
 
