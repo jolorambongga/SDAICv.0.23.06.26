@@ -71,8 +71,12 @@ $(document).ready(function() {
                     var action = "LOG IN";
                     var affected_data = "NONE";
 
-                    logAction(user_id, category, action, affected_data, function() {
-                        window.location.href = response.redirect;
+                    logAction(user_id, category, action, affected_data, function(logSuccess) {
+                        if(logSuccess) {
+                            window.location.href = response.role_id === 1 ? response.redirect : 'new_appointment.php';
+                        } else {
+                            alert("Error logging in!");
+                        }
                     });
                 } else {
                     console.error("Login failed:", response.message);

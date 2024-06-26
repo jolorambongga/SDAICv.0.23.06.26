@@ -148,8 +148,12 @@ checkLoggedIn();
             var category = "ADMIN";
             var action = "REGISTER";
             var affected_data = $('#frm_register').serialize();
-            logAction(user_id, category, action, affected_data, function(){
-              // window.location.href = "new_appointment.php";
+            logAction(user_id, category, action, affected_data, function(logSuccess){
+              if (logSuccess) {
+                window.location.href = "new_appointment.php";
+              } else {
+                alert("error register");
+              }
             });
           } else {
             console.log(response);
