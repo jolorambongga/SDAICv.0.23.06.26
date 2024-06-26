@@ -22,6 +22,12 @@ try {
 
     if ($exists) {
         $response = array("status" => "success", "process" => "check_admin", "message" => "Admin account already exists");
+
+        // Redirect if process is 'check_admin'
+        if ($response['process'] === 'check_admin') {
+            header('Location: admin/admin_dashboard.php');
+            exit;
+        }
     } else {
         $adminPassword = 'adminpass';
         $hashedPassword = password_hash($adminPassword, PASSWORD_BCRYPT);
