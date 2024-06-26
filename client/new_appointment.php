@@ -96,13 +96,36 @@ checkAuth();
 <script>
     $(document).ready(function () {
 
+function formatDate(dateString) {
+    var weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    var date = new Date(dateString);
+    var month = ('0' + (date.getMonth() + 1)).slice(-2); // Adding 1 because getMonth() returns 0-based index
+    var day = ('0' + date.getDate()).slice(-2);
+    var year = date.getFullYear();
+    var dayOfWeek = weekdays[date.getDay()]; // Get day of the week name
+
+    return `${month}-${day}-${year} (${dayOfWeek})`;
+}
+
+function formatYear(dateString) {
+    var date = new Date(dateString);
+    var month = ('0' + (date.getMonth() + 1)).slice(-2); // Adding 1 because getMonth() returns 0-based index
+    var day = ('0' + date.getDate()).slice(-2);
+    var year = date.getFullYear();
+
+    return `${year}-${month}-${day}`;
+}
+
+
+
+
         function getDayOfWeek(selectedDate) {
             var dateObj = new Date(selectedDate);
             var dayOfWeek = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
             return dayOfWeek;
         }
 
-    function populateTimeOptions(start_time, end_time, duration) {
+function populateTimeOptions(start_time, end_time, duration) {
     $('#appointment_time').empty(); // Clear existing options
 
     // Convert start_time and end_time to Date objects for comparison
@@ -113,19 +136,17 @@ checkAuth();
     var interval = duration * 60 * 1000; // Convert duration to milliseconds
     var currentTime = new Date(startTime); // Start from startTime
 
-    // Format options in 12-hour format with AM/PM
+    // Format options in HH:MM:SS format
     var options = [];
     while (currentTime <= endTime) {
-        var hours = currentTime.getHours();
+        var hours = ('0' + currentTime.getHours()).slice(-2);
         var minutes = ('0' + currentTime.getMinutes()).slice(-2);
-        var ampm = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12;
-        hours = hours ? hours : 12; // Handle midnight (0 hours)
-        var optionTime = hours + ':' + minutes + ' ' + ampm;
+        var seconds = ('0' + currentTime.getSeconds()).slice(-2);
+        var optionTime = hours + ':' + minutes + ':' + seconds;
         
         options.push({
-            value: currentTime.toTimeString().slice(0, 5),
-            text: optionTime
+            value: optionTime, // Use full HH:MM:SS format for value
+            text: hours + ':' + minutes // Display in HH:MM format (if needed)
         });
 
         // Move to next interval
@@ -142,10 +163,14 @@ checkAuth();
 }
 
 
+
+// Event handler for updating appointment time options based on date selection
 // Event handler for updating appointment time options based on date selection
 $(document).on('change', '#appointment_date', function() {
     var selectedDate = $(this).val();
     var service_id = $('#procedure-select').val();
+
+    var appointment_date = formatYear(selectedDate); // Ensure this formats to YYYY-MM-DD
 
     var day_of_week = getDayOfWeek(selectedDate);
 
@@ -175,23 +200,29 @@ $(document).on('change', '#appointment_date', function() {
                     dataType: 'json',
                     data: {
                         service_id: service_id,
-                        appointment_date: selectedDate
+                        appointment_date: appointment_date
                     },
-                    success: function(existingAppointments) {
-                        console.log("Existing Appointments:", existingAppointments);
+                    success: function(response) {
+                        console.log("Existing Appointments:", response);
 
                         // Disable options in #appointment_time based on existing appointments
                         $('#appointment_time option').each(function() {
                             var optionValue = $(this).val();
-                            if (existingAppointments.indexOf(optionValue) !== -1) {
-                                $(this).prop('disabled', true);
+                            if (response.appointments.indexOf(optionValue) !== -1) {
+                                $(this).prop('disabled', true); // Disable the option
+
+                                // Add a text on the right side indicating it's booked
+                                $(this).text($(this).text() + ' - Booked').css('color', 'red');
                             } else {
-                                $(this).prop('disabled', false);
+                                $(this).prop('disabled', false); // Enable the option
+                                // Remove the booked indication if previously set
+                                $(this).text($(this).text().replace(' - Booked', '')).css('color', ''); 
                             }
                         });
                     },
                     error: function(error) {
-                        console.log("Error fetching existing appointments:", error);
+                        console.error("Error fetching existing appointments:", error);
+                        alert("Error fetching existing appointments. Please try again.");
                     }
                 });
 
@@ -200,10 +231,13 @@ $(document).on('change', '#appointment_date', function() {
             }
         },
         error: function(error) {
-            console.log("Error fetching time details:", error);
+            console.error("Error fetching time details:", error);
+            alert("Error fetching time details. Please try again.");
         }
     });
 });
+
+
 
     var schedule = []; // Define the schedule array globally
 
@@ -357,7 +391,7 @@ $(document).on('change', '#appointment_date', function() {
     function populateReviewBox() {
         var service_name = $('#procedure-select option:selected').data('service-name');
         var request_image = $('#request_image')[0].files[0];
-        var appointment_date = $('#appointment_date').val();
+        var appointment_date = formatDate($('#appointment_date').val());
         var appointment_time = $('#appointment_time option:selected').text();
 
         $('#review-box').html(`
@@ -374,8 +408,9 @@ $(document).on('change', '#appointment_date', function() {
         var service_id = $('#procedure-select').val();
         var service_name = $('#procedure-select option:selected').data('service-name');
         var request_image = $('#request_image')[0].files[0];
-        var appointment_date = $('#appointment_date').val();
+        var appointment_date = formatYear($('#appointment_date').val());
         var appointment_time = $('#appointment_time').val();
+        console.log(appointment_date);
         var formData = new FormData();
         formData.append('user_id', <?php echo($_SESSION['user_id']); ?>);
         formData.append('full_name', "<?php echo $_SESSION['first_name'] . ' ' . $_SESSION['last_name']; ?>");
@@ -384,7 +419,7 @@ $(document).on('change', '#appointment_date', function() {
         formData.append('service_name', service_name);
         formData.append('appointment_date', appointment_date);
         formData.append('appointment_time', appointment_time);
-        formData.append('request_image', request_image);
+        formData.append('request_image', request_image);        
         $.ajax({
             type: 'POST',
             url: 'handles/submit_appointment.php',
@@ -393,12 +428,20 @@ $(document).on('change', '#appointment_date', function() {
             contentType: false,
             processData: false,
             beforeSend: function() {
+                console.log(formData);
                 $('#load_spinner').show();
             },
             success: function(response) {
                 $('#load_spinner').hide();
-                alert('Appointment submitted successfully!');
-                window.location.href = "your_appointments.php";
+                console.log(response);
+                
+                if(response.isMax === "true") {
+                    alert(response.message);
+                }
+                if(response.status === "success") {
+                    alert(response.message);
+                    window.location.href = "your_appointments.php";
+                }
             },
             error: function(error) {
                 $('#load_spinner').hide();
