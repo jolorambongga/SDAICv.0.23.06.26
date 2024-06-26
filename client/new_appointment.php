@@ -93,7 +93,7 @@ checkAuth();
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
 <script>
-$(document).ready(function () {
+    $(document).ready(function () {
 
     var schedule = []; // Define the schedule array globally
 
@@ -119,12 +119,12 @@ $(document).ready(function () {
                     schedule.push(scheduleItem); // Push schedule item to array
 
                     const schedule_html = `
-                        <div>
-                            <p>DAY OF WEEK: ${data.day_of_week}</p>
-                            <p>START TIME: ${data.start_time}</p>
-                            <p>END TIME: ${data.end_time}</p>
-                        </div>
-                        <hr>
+                    <div>
+                    <p>DAY OF WEEK: ${data.day_of_week}</p>
+                    <p>START TIME: ${data.start_time}</p>
+                    <p>END TIME: ${data.end_time}</p>
+                    </div>
+                    <hr>
                     `;
                     body.append(schedule_html); // Append schedule HTML to body
                 });
@@ -141,28 +141,42 @@ $(document).ready(function () {
 
     // Function to update datepicker availability based on schedule
     function updateDatePickerAvailability() {
-        // Array to map numeric day index to string day name
+        $("#appointment_date").datepicker("destroy"); // Destroy existing datepicker instance
+
         var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-        $("#appointment_date").datepicker("option", {
+        // Your schedule list
+
+        $("#appointment_date").datepicker({
             dateFormat: 'yy-mm-dd',
             showButtonPanel: true,
             minDate: 0,
             changeMonth: true,
-            changeYear: false,
+            changeYear: true,
+            regional: 'en',
             beforeShowDay: function(date) {
                 var day = date.getDay();
-                var dayName = dayNames[day];
-                var isEnabled = schedule.some(function(item) {
-                    return item.day_of_week === dayName;
+                var isDisabled = schedule.some(function(item) {
+                    // console.log("LAMAN ", item.day_of_week);
+                    return dayNames.indexOf(item.day_of_week) == day;
                 });
-                return [isEnabled, isEnabled ? "" : "disabled"];
+                // console.log(("Monday").includes(day));
+                // console.log("is disabled console", isDisabled);
+                // console.log("MGA PUTAKTENG DAY YAN: " + day);
+                if (isDisabled) {
+                    console.log("is disabled condition if statement");
+                    return [true, 'disabled', 'Unavailable'];
+                } else {
+                    return [false, '', 'Available'];
+                }
             },
             onSelect: function(dateText) {
                 // Implement any additional logic on date selection if needed
             }
         });
     }
+
+
 
     // Event handler for procedure selection change
     $(document).on('change', '#procedure-select', function() {
@@ -249,7 +263,7 @@ $(document).ready(function () {
             <p><strong>Image:</strong> ${request_image ? request_image.name : 'No image uploaded'}</p>
             <p><strong>Appointment Date:</strong> ${appointment_date}</p>
             <p><strong>Appointment Time:</strong> ${appointment_time}</p>
-        `);
+            `);
     }
 
     // Event handler for form submission
