@@ -11,20 +11,12 @@ try {
 	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 	$appointment_id = $_POST['appointment_id'];
-	$status = $_POST['status'];
-	$user_input = $_POST['user_input'];
-	$reason = isset($_POST['reason']) ? "<b>Reason of Rejection:</b> <i>" . $_POST['reason'] . "</i>" : '';
+	$additional_note = '';
 
-	$sql = "UPDATE tbl_Appointments
-	SET status = :status
-	WHERE appointment_id = :appointment_id;";
+	if (isset($_POST['additional_note']) && !empty(trim($_POST['additional_note']))) {
+        $additional_note = "<b>Note: </b> <i>" . htmlspecialchars($_POST['additional_note']) . "</i>";
+    }	
 
-	$stmt = $pdo->prepare($sql)			;
-
-	$stmt->bindParam(':status', $status, PDO::PARAM_STR);
-	$stmt->bindParam(':appointment_id', $appointment_id, PDO::PARAM_INT);
-
-	$stmt->execute();
 
 	$sql = "SELECT *, CONCAT(u.first_name, ' ', u.last_name) as full_name, s.service_name
 	FROM tbl_Appointments as a
@@ -63,22 +55,11 @@ try {
 
 	$email = $data['email'];
 
-	$subject = "Appointment Status Update! - " . date('F j, Y');
+	$subject = "Notice for Procedure Results! - " . date('F j, Y');
 
-	$status = $data['status'];
+	$status_title = "Results ready for <span style='color: green;'>CLAIM!</span>";
 
-	$approved = "Please come on the date and time provided above. Thank You!";
-	$rejected = "See notes below for information as to why it has been rejected, if you have further questions you may inquire through our social media and contacts. You may also try re-applying for an appointment. Thank You!";
-
-	if($status === 'APPROVED') {
-		$status_message = $approved;
-		$color = "green";
-	} else if ($status === 'REJECTED') {
-		$status_message = $rejected;
-		$color = "red";
-	}
-
-	$status_title = "<b>Has been <span style='color: $color;'>$status</span></b>";
+	$status_message = "Please come by at the clinic at any time during clinic hours, or you may read additional information below for additional notes. Thank you for using our services!";
 
 	$message = "
 	<html>
@@ -133,11 +114,11 @@ try {
 	<body>
 	<div class='container'>
 	<div class='header'>
-	<h2>Appointment Status Update</h2>
+	<h2>Notice on Results</h2>
 	</div>
 	<div class='content'>
 	<p>Good Day <span class='highlight'>$full_name</span>!</p>
-	<p>Your recently submitted appointment for:</p>
+	<p>Your recently procedure for:</p>
 	<div class='appointment-details'>
 	<p><strong>Procedure:</strong> <span class='highlight'>$service_name</span></p>
 	<p><strong>Appointment Date:</strong> $formatted_date</p>
@@ -145,9 +126,9 @@ try {
 	</div>
 	<hr>
 	<br>
-	<p><bold><center>$status_title!</center></bold></p>
+	<p><b><center>$status_title!</center></b></p>
 	<p><center>$status_message</center></p>
-	<p><center>$reason</center></p>
+	<p><center>$additional_note</center></p>
 	</div>
 	<div class='footer'>
 	<p>&copy; " . date('Y') . " Sta Maria Diagnostic Clinic. All rights reserved.</p>
@@ -162,9 +143,9 @@ try {
 
 	header('Content-Type: application/json');
 
-	echo json_encode(array("status" => "success", "process" => "reject appointment", "data" => $data, "reason" => $reason));
+	echo json_encode(array("status" => "success", "process" => "email_result_ready", "data" => $additional_note));
 
 } catch (PDOException $e) {
-	echo json_encode(array("status" => "error", "message" => $e->getMessage(), "process" => "reject appointment", "report" => "catch reached"));
+	echo json_encode(array("status" => "error", "message" => $e->getMessage(), "process" => "email_result_ready", "report" => "catch_reached"));
 }
 ?>

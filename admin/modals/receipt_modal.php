@@ -2,7 +2,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="mod_InputLabel">Generate Receipt for <span id="patient_name"></span> : <span id="service_name"></span></h5>
+        <h5 class="modal-title" id="mod_InputLabel">Generate Receipt for <span id="patient_name"></span> : <span id="service_name"></span> (<span id="service_price"></span>)</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -32,15 +32,15 @@
       </div>
       <div class="modal-body">
         <div id="receiptDetails">
-          <p><strong>Patient Name:</strong> <span id="receiptPatientName"></span></p>
+          <p class="  patient-name"><strong>Patient Name:</strong> <span id="receiptPatientName"></span></p>
           <p><strong>Procedure Type:</strong> <span id="receiptProcedureType"></span></p>
           <p><strong>Appointment Date:</strong> <span id="receiptAppointmentDate"></span></p>
           <p><strong>Appointment Time:</strong> <span id="receiptAppointmentTime"></span></p>
           <hr>
-          <p class="text-end"><strong>Price:</strong> <span id="receiptPrice"></span></p>
-          <p class="text-end"><strong>Cash:</strong> <span id="receiptCash"></span></p>
-          <p class="text-end"><strong>Change:</strong> <span id="receiptChange"></span></p>
-          <small><p class="text-center"><strong>Date Generated:</strong> <span id="receiptDateGenerated"></span></p></small>
+          <p class="text-end right-align price"><strong>Price:</strong> <span id="receiptPrice"></span></p>
+          <p class="text-end right-align cash"><strong>Cash:</strong> <span id="receiptCash"></span></p>
+          <p class="text-end right-align change"><strong>Change:</strong> <span id="receiptChange"></span></p>
+          <small><p class="text-center date-generated"><strong>Date Generated:</strong> <span id="receiptDateGenerated"></span></p></small>
         </div>
       </div>
       <div class="modal-footer">
@@ -69,8 +69,10 @@
       console.log($('#price'));
       var patient_name = $('#r_patient_name').val();
       var service_name = $('#r_procedure').val();
+      var service_price = $('#r_price').val();
       $('#patient_name').text(patient_name);
       $('#service_name').text(service_name);
+      $('#service_price').text(service_price);
     });
 
     $(document).on('hidden.bs.modal', '#mod_Input', function () {
@@ -138,9 +140,8 @@
       $('#mod_Receipt').modal('show');
     });
 
-    // Event listener for printing receipt
-    $('#printReceipt').click(function() {
-      var printWindow = window.open('', '_blank');
+$('#printReceipt').click(function() {
+  var printWindow = window.open('', '_blank');
   var modalContent = $('#mod_Receipt .modal-content').clone(); // Clone the modal content
 
   // Remove any existing script tags to prevent execution in the print window
@@ -154,10 +155,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Print Receipt</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .centered-text {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+    .left-align {
+      text-align: left;
+      width: 50%; /* Adjust this value as needed */
+    }
+    .right-align {
+      text-align: right;
+      width: 85%; /* Adjust this value as needed */
+    }
+    .price-container, .cash-container, .change-container {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+    .price, .cash, .change {
+      margin-left: 50px;
+    }
+    .date-generated {
+      text-align: center;
+      margin-top: 20px; /* Adjust this value for spacing */
+    }
+  </style>
   <link rel="stylesheet" href="print.css" media="print">
   </head>
   <body>
+    <div class="container">
   ${modalContent[0].outerHTML}
+    </div>
   <script>
   window.onload = function() {
     window.print();
@@ -171,6 +206,7 @@
   printWindow.document.write(html);
   printWindow.document.close();
 });
+
 
 
   });
